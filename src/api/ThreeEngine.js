@@ -7,9 +7,18 @@ let TCE = {
   version: "0.0.1",
   _modelPromises:{},
   GetModel:function (key) {
-    if(TCE._modelPromises[key]){
-      return TCE._modelPromises[key];
+    if(this._modelPromises[key]){
+      return this._modelPromises[key];
     }else return this.ModelLoaders[key].apply(this);
+  },
+  GetTexture:function (key) {
+    if(!this._textures[key]){
+      this._textures[key]=new THREE.TextureLoader().load(key);
+    }
+    return this._textures[key]
+  },
+  _textures:{},
+  TextureLoaders:{
   },
   ModelLoaders:{
     tree:function () {
@@ -246,8 +255,6 @@ TCE.MapScene.prototype = {
   Resize: function () {
     let renderWidth = this._container.clientWidth;
     let renderHeight = this._container.clientHeight;
-    console.error(renderWidth+","+renderHeight);
-    console.error(this._container);
     this._renderer.setSize(renderWidth, renderHeight);
     this._mainCamera.aspect = renderWidth / renderHeight;
     this._mainCamera.updateProjectionMatrix();//相机参数变化时必须调用此函数更新
@@ -270,7 +277,8 @@ TCE.MapScene.prototype = {
     switch (type) {
       case TCE.MapScene.ArcGisLayerType.Green: {
         function creater() {
-          let texture = new THREE.TextureLoader().load("statics/pic/grass" + (1 + Math.floor(Math.random() * 4)) + ".jpg");
+          let textureUrl="statics/pic/grass" + (1 + Math.floor(Math.random() * 4)) + ".jpg";
+          let texture =TCE.GetTexture(textureUrl);
           texture.wrapS = THREE.RepeatWrapping;
           texture.wrapT = THREE.RepeatWrapping;
           texture.repeat.set(0.04, 0.04);
@@ -285,17 +293,19 @@ TCE.MapScene.prototype = {
         break;
       case TCE.MapScene.ArcGisLayerType.build: {
         function creater() {
-          let sideTexture = new THREE.TextureLoader().load("statics/pic/" + (Math.floor(Math.random() * 8)) + ".jpg");
+          let sideTextureUrl="statics/pic/" + (Math.floor(Math.random() * 8)) + ".jpg";
+          let sideTexture=TCE.GetTexture(sideTextureUrl);
           sideTexture.wrapS = THREE.RepeatWrapping;
           sideTexture.wrapT = THREE.RepeatWrapping;
           sideTexture.repeat.set(0.05, 0.05);
-          let topTexture = new THREE.TextureLoader().load("statics/pic/roof" + (1 + Math.floor(Math.random() * 4)) + ".jpg");
+          let topTextureUrl="statics/pic/roof" + (1 + Math.floor(Math.random() * 4)) + ".jpg";
+          let topTexture=TCE.GetTexture(topTextureUrl);
           topTexture.wrapS = THREE.RepeatWrapping;
           topTexture.wrapT = THREE.RepeatWrapping;
           topTexture.repeat.set(0.02, 0.02);
           let roofMat = new THREE.MeshBasicMaterial({map: topTexture});
           let wallMat = new THREE.MeshBasicMaterial({map: sideTexture});
-          let material = new THREE.MultiMaterial([roofMat, wallMat]);
+          let material =[roofMat, wallMat];
           return material;
         }
         this.CreateArcPolygonLayer(data, {
