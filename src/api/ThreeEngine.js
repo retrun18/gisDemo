@@ -5,25 +5,24 @@ import THREE from "./ExtendedTHREE"
 
 let TCE = {
   version: "0.0.1",
-  _modelPromises:{},
-  GetModel:function (key) {
-    if(this._modelPromises[key]){
+  _modelPromises: {},
+  GetModel: function (key) {
+    if (this._modelPromises[key]) {
       return this._modelPromises[key];
-    }else return this.ModelLoaders[key].apply(this);
+    } else return this.ModelLoaders[key].apply(this);
   },
-  GetTexture:function (key) {
-    if(!this._textures[key]){
-      this._textures[key]=new THREE.TextureLoader().load(key);
+  GetTexture: function (key) {
+    if (!this._textures[key]) {
+      this._textures[key] = new THREE.TextureLoader().load(key);
     }
     return this._textures[key]
   },
-  _textures:{},
-  TextureLoaders:{
-  },
-  ModelLoaders:{
-    tree:function () {
-      this._modelPromises.tree=new Promise(function (resolve) {
-        let name="Alder_Buckthorn_Fan";
+  _textures: {},
+  TextureLoaders: {},
+  ModelLoaders: {
+    tree: function () {
+      this._modelPromises.tree = new Promise(function (resolve) {
+        let name = "Alder_Buckthorn_Fan";
         ///开始加载模型
         let mtlloader = new THREE.MTLLoader();
         mtlloader.setPath("statics/Upload/");
@@ -36,8 +35,12 @@ let TCE = {
             resolve(object);
           }, onProgress, onError);
         });
-        function onProgress(mes) { }
-        function onError(mes) { }
+
+        function onProgress(mes) {
+        }
+
+        function onError(mes) {
+        }
       })
       return this._modelPromises.tree;
     }
@@ -163,11 +166,13 @@ TCE.MapScene = function (container, params) {
   }
   let camera = this._mainCamera;
   let scene = this._scene;
-  let scope=this;
+  let scope = this;
+
   function render() {
     requestAnimationFrame(render);
     scope._renderer.render(scene, camera);
   }
+
   render();
   // this.ResetView();
 };
@@ -277,14 +282,15 @@ TCE.MapScene.prototype = {
     switch (type) {
       case TCE.MapScene.ArcGisLayerType.Green: {
         function creater() {
-          let textureUrl="statics/pic/grass" + (1 + Math.floor(Math.random() * 4)) + ".jpg";
-          let texture =TCE.GetTexture(textureUrl);
+          let textureUrl = "statics/pic/grass" + (1 + Math.floor(Math.random() * 4)) + ".jpg";
+          let texture = TCE.GetTexture(textureUrl);
           texture.wrapS = THREE.RepeatWrapping;
           texture.wrapT = THREE.RepeatWrapping;
           texture.repeat.set(0.04, 0.04);
           let mat = new THREE.MeshPhongMaterial({map: texture});
           return mat;
         }
+
         this.CreateArcPolygonLayer(data, {
           material: creater//,
           // randomHeight:false
@@ -293,21 +299,22 @@ TCE.MapScene.prototype = {
         break;
       case TCE.MapScene.ArcGisLayerType.build: {
         function creater() {
-          let sideTextureUrl="statics/pic/" + (Math.floor(Math.random() * 8)) + ".jpg";
-          let sideTexture=TCE.GetTexture(sideTextureUrl);
+          let sideTextureUrl = "statics/pic/" + (Math.floor(Math.random() * 8)) + ".jpg";
+          let sideTexture = TCE.GetTexture(sideTextureUrl);
           sideTexture.wrapS = THREE.RepeatWrapping;
           sideTexture.wrapT = THREE.RepeatWrapping;
           sideTexture.repeat.set(0.05, 0.05);
-          let topTextureUrl="statics/pic/roof" + (1 + Math.floor(Math.random() * 4)) + ".jpg";
-          let topTexture=TCE.GetTexture(topTextureUrl);
+          let topTextureUrl = "statics/pic/roof" + (1 + Math.floor(Math.random() * 4)) + ".jpg";
+          let topTexture = TCE.GetTexture(topTextureUrl);
           topTexture.wrapS = THREE.RepeatWrapping;
           topTexture.wrapT = THREE.RepeatWrapping;
           topTexture.repeat.set(0.02, 0.02);
           let roofMat = new THREE.MeshBasicMaterial({map: topTexture});
           let wallMat = new THREE.MeshBasicMaterial({map: sideTexture});
-          let material =[roofMat, wallMat];
+          let material = [roofMat, wallMat];
           return material;
         }
+
         this.CreateArcPolygonLayer(data, {
           material: creater
         });
@@ -323,23 +330,23 @@ TCE.MapScene.prototype = {
     }
   },
   CreateArcPointLayer: function (data) {
-    let layerData=data;
-    let layer=new THREE.Group();
-    layer.geoType="esriGeometryPoint";
-    let features=layerData.features;
+    let layerData = data;
+    let layer = new THREE.Group();
+    layer.geoType = "esriGeometryPoint";
+    let features = layerData.features;
     this._scene.add(layer);
     for (let i = 0; i < features.length; i++) {
       let graphic = features[i];
-      let geometry=graphic.geometry;
-      let atts=graphic.attributes;
-      let position=this._arcGisConverter.ToScenePoint(new THREE.Vector2(geometry.x,geometry.y));
+      let geometry = graphic.geometry;
+      let atts = graphic.attributes;
+      let position = this._arcGisConverter.ToScenePoint(new THREE.Vector2(geometry.x, geometry.y));
       TCE.GetModel("tree").then(function (model) {
-      let tree=model.clone();
-      tree.position.set(position.x+0.01,position.y,position.z);
-      let size=1+Math.floor(Math.random()*2);
-      tree.scale.set(size,size,size);
-      tree.rotateY(Math.floor(Math.random() * 180));
-      layer.add(tree);
+        let tree = model.clone();
+        tree.position.set(position.x + 0.01, position.y, position.z);
+        let size = 1 + Math.floor(Math.random() * 2);
+        tree.scale.set(size, size, size);
+        tree.rotateY(Math.floor(Math.random() * 180));
+        layer.add(tree);
       });
     }
   },
@@ -359,7 +366,7 @@ TCE.MapScene.prototype = {
     let features = layerData.features;
     for (let key in features) {
       let graphic = features[key];
-      let scope=this;
+      let scope = this;
       //异步执行
       Promise.resolve(graphic).then(function (graphic) {
         let geometry = graphic.geometry;
@@ -397,6 +404,9 @@ TCE.MapScene.prototype = {
       })
     }
   },
+  CreateCavasSprite:function () {
+    var material=new THREE.SpriteCanvasMaterial({color:"#ffffff"})
+  },
   _arcGisConverter: {
     _mapCenter: {x: 1, y: 1},
     _mapScale: 1,
@@ -411,6 +421,22 @@ TCE.MapScene.prototype = {
       let my = -point.z * this._mapScale + this._mapCenter.y;
       return new THREE.Vector2(mx, my);
     }
+  },
+  /**
+   * @summary 获取sprite标注的实际大小尺寸
+   * @param {THREE.Vector3} position 目标位置
+   * @param {Object} poiRect sprite的矩形大小（像素单位）
+   * @returns {Array}
+   * @private
+   */
+  _getPoiScale(position, poiRect) {
+    let pos = position ? position : this._controller.target;
+    let distance = this._mainCamera.position.distanceTo(pos);
+    let top = Math.tan(this._mainCamera.fov / 2 * (Math.PI / 180)) * distance;//到画布顶部边线投射到目标位置所在平面的3D世界距离
+    let meterPerPixel = 2 * top / this._container.clientHeight;
+    let scaleX = poiRect.w * meterPerPixel;
+    let scaley = poiRect.h * meterPerPixel;
+    return [scaleX,scaley,1.0];
   }
 };
 TCE.MapScene.prototype.constructor = TCE.MapScene;
