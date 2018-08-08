@@ -81,6 +81,12 @@
             <q-item-main label="WebGL" sublabel="WebGL性能优化"/>
           </q-item>
         </router-link>
+        <router-link to="/test">
+          <q-item>
+            <q-item-side icon="school"/>
+            <q-item-main label="test" sublabel="canvas"/>
+          </q-item>
+        </router-link>
         <q-item @click.native="showSTCP()">
           <q-item-side icon="school"/>
           <q-item-main label="STCP" sublabel="三维gis城市"/>
@@ -108,7 +114,7 @@
     data() {
       return {
         leftDrawerOpen: this.$q.platform.is.desktop,
-        isSTCP: true
+        isSTCP: false
       }
     },
     beforeRouteUpdate (to,from,next) {

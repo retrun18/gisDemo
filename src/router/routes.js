@@ -10,7 +10,8 @@ export default [
       {path:'page4',component:()=>import("pages/page4")},
       {path:'page5',component:()=>import("pages/page5")},
       {path:'page6',component:()=>import("pages/page6")},
-      {path:'page7',component:()=>import("pages/page7")}
+      {path:'page7',component:()=>import("pages/page7")},
+      {path:'test',component:()=>import("pages/test")}
     ]
   },
 

@@ -164,6 +164,14 @@ TCE.MapScene = function (container, params) {
     let sky = new THREE.Mesh(skyGeo, skyMat);
     this._scene.add(sky);
   }
+  {
+    let material=new THREE.SpriteMaterial({map:TCE.GetTexture("statics/pic/" + (Math.floor(Math.random() * 8)) + ".jpg")})
+    let sprite=new THREE.Sprite(material);
+    sprite.center.set(0,5,0,0);
+    let scale=this._getPoiScale(new THREE.Vector3(0,0,0),{w:100,h:100})
+    sprite.scale.set( ...scale);
+    this._scene.add(sprite);
+  }
   let camera = this._mainCamera;
   let scene = this._scene;
   let scope = this;
@@ -172,7 +180,6 @@ TCE.MapScene = function (container, params) {
     requestAnimationFrame(render);
     scope._renderer.render(scene, camera);
   }
-
   render();
   // this.ResetView();
 };

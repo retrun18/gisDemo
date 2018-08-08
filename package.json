@@ -9,10 +9,11 @@
   "scripts": {
     "test": "echo \"No test specified\" && exit 0",
     "dev": "quasar dev",
-    "build":"quasar build"
+    "build": "quasar build"
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "html2canvas": "^1.0.0-alpha.12",
     "three": "^0.93.0",
     "vue-i18n": "^7.3.3"
   },
